@@ -1,0 +1,14 @@
+{
+  "name": "claude-second-screen",
+  "owner": { "name": "XxRexRaptorxX" },
+  "metadata": {
+    "description": "Claude Code mods for working with more than one monitor."
+  },
+  "plugins": [
+    {
+      "name": "second-screen-preview",
+      "source": "./",
+      "description": "Pops the Browser pane out into its own window, maximized on the second monitor."
+    }
+  ]
+}

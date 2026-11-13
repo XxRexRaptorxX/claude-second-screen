@@ -1,0 +1,10 @@
+{
+  "name": "second-screen-preview",
+  "version": "1.0.0",
+  "description": "Pops the Claude desktop app's Browser pane out into its own window and maximizes that window on your second monitor, so the chat stays free.",
+  "author": { "name": "XxRexRaptorxX" },
+  "license": "MIT",
+  "homepage": "https://github.com/XxRexRaptorxX/claude-second-screen",
+  "repository": "https://github.com/XxRexRaptorxX/claude-second-screen",
+  "keywords": ["browser", "preview", "multi-monitor", "second-screen", "windows", "desktop-app"]
+}

@@ -1,0 +1,12 @@
+# Written by Claude Code when it loads the mod from a folder it watches
+.claude-plugin/types/
+.mcpb-cache/
+
+# Editors, OS, logs
+.vscode/
+.idea/
+*.log
+*~
+*.swp
+.DS_Store
+Thumbs.db
