@@ -2,6 +2,10 @@
 
 All notable changes to this mod are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-11-13
+
+- Adds the mod's icon (`.claude-plugin/icon.png`).
+
 ## [1.0.0] - 2026-11-13
 
 First public release.
