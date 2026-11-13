@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".claude-plugin/icon.png" alt="Second Screen Preview logo: a browser window moving from the main monitor to a second monitor" width="160">
+</p>
+
 # Second Screen Preview – a Claude Code mod
 
 **Keep the chat free: the Claude desktop app's Browser pane opens in its own window, maximized on your second monitor.**
