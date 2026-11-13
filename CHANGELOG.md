@@ -2,6 +2,12 @@
 
 All notable changes to this mod are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-11-13
+
+- The mod no longer hooks Claude's browser tool calls: the watcher already pops the pane out wherever it comes from.
+- Commands and matchers are fixed text; the README now says which program the mod runs, with the exact command lines, what it sends (nothing over the network) and what each hook does.
+- The watcher takes `-PopOutMode auto|off` instead of the `-AutoPopOut` switch.
+
 ## [1.0.1] - 2026-11-13
 
 - Adds the mod's icon (`.claude-plugin/icon.png`).

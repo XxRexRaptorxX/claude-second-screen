@@ -6,9 +6,10 @@ The mod has two parts: a Claude Code hooks module (`hooks/register.ts`) and a Wi
 
 | Hook | What it does |
 | --- | --- |
-| `session.start` | Registers the `/second-screen` command and starts the watcher (`second-screen.ps1 -Watch`). |
-| `tool.call` on `mcp__Claude_Browser__preview_start` and `mcp__Claude_Browser__navigate` | After the call succeeds, runs `second-screen.ps1 -PopOut` outside the tool call, so Claude is never held up. |
-| `command.run` on `second-screen` | Reads and changes the settings, kept with `$.store` across sessions. |
+| `session.start` | Registers the `/second-screen` command and starts the watcher (`second-screen.ps1 -Watch -Monitor <n> -PopOutMode auto|off`). |
+| `command.run` on `second-screen` | Answers only its own command: reads and changes the settings, kept with `$.store` across sessions, and restarts the watcher. |
+
+The watcher notices the Browser pane wherever it comes from (a preview Claude starts, the chat's **Open** button), so the mod hooks no tool calls.
 
 The watcher is a child process of the session: it ends with the session or when the mod reloads.
 
@@ -18,8 +19,8 @@ The watcher is a child process of the session: it ends with the session or when 
 
 | Mode | What it does |
 | --- | --- |
-| `-Watch [-AutoPopOut]` | Runs until stopped. Every 0.4 s it lists the desktop app's visible windows; a new window titled `Browser` is moved to the target monitor and maximized. With `-AutoPopOut`, about once a second it also asks Windows UI Automation whether the Browser pane is shown in a main window, and pops a newly shown pane out. |
-| `-PopOut` | Pops the pane out once (if no pop-out window exists yet) and places the new window. |
+| `-Watch [-PopOutMode auto]` | Runs until stopped. Every 0.4 s it lists the desktop app's visible windows; a new window titled `Browser` is moved to the target monitor and maximized. With `-PopOutMode auto`, about once a second it also asks Windows UI Automation whether the Browser pane is shown in a main window, and pops a newly shown pane out. |
+| `-PopOut` | Pops the pane out once (if no pop-out window exists yet) and places the new window. Not used by the mod; handy for trying the script by hand. |
 | `-Place` | Places the Browser windows that are open now. |
 | `-List` | Prints the monitors and how many pop-out windows are open. |
 

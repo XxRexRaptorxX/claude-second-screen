@@ -2,7 +2,7 @@
 
 **Keep the chat free: the Claude desktop app's Browser pane opens in its own window, maximized on your second monitor.**
 
-When Claude starts a preview of your dev server, or you open the Browser pane yourself, this mod pops the pane out into its own window and maximizes that window on another monitor. Tabs, address bar and the annotation tools stay as they are; it is the app's own Browser window, not an extra browser.
+When the Browser pane shows up in the main window (Claude starts a preview of your dev server, or you open the pane yourself), this mod pops the pane out into its own window and maximizes that window on another monitor. Tabs, address bar and the annotation tools stay as they are; it is the app's own Browser window, not an extra browser.
 
 [Deutsch weiter unten](#deutsch)
 
@@ -57,7 +57,31 @@ Docking back with **Open in main window** ("Im Hauptfenster öffnen") is respect
 - **The pane has to be on screen.** A Browser pane that is open but not shown (another session in front, the window minimized) is popped out once it shows.
 - **A little CPU.** A small PowerShell loop checks about once a second whether the pane appeared (each check takes ~0.1 s). However many sessions are open, only one loop does the work.
 - **UI labels.** The mod finds the app's buttons by their names, in German and English. A future app update that renames them can break the automatic pop-out; maximizing windows you pop out by hand keeps working.
-- **No network, no data.** The mod reads nothing from your projects and sends nothing anywhere. See [docs/how-it-works.md](docs/how-it-works.md).
+- **No network, no data.** The mod reads nothing from your projects and sends nothing anywhere. See [What the mod runs and sends](#what-the-mod-runs-and-sends).
+
+## What the mod runs and sends
+
+**Hooks.** The mod's hooks module (`hooks/register.ts`) has two hooks:
+
+| Hook | What it does |
+| --- | --- |
+| `session.start` | Registers the `/second-screen` command and starts the watcher program below. Then lets the session start as usual. |
+| `command.run` on `second-screen` | Answers only its own `/second-screen` command: shows the settings, changes them (kept in Claude Code's plugin store) and restarts the watcher with the new settings. |
+
+It hooks no tool calls, prompts, permissions or settings.
+
+**Programs.** The mod runs one program: **Windows PowerShell** (`powershell.exe`, part of Windows) with the script bundled in the mod, `scripts/second-screen.ps1`. A hooks module cannot move windows or press the app's buttons itself, so this script does it through the Windows APIs (`user32.dll`: find, move and maximize windows, set the mouse pointer) and Windows UI Automation (find and press the pane's buttons). The exact command lines are:
+
+| When | Command |
+| --- | --- |
+| Each session starts (the watcher, runs until the session ends) | `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <mod folder>/scripts/second-screen.ps1 -Watch -Monitor <n> -PopOutMode auto` (or `off` after `/second-screen popout off`) |
+| `/second-screen place` | `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <mod folder>/scripts/second-screen.ps1 -Place -Monitor <n>` |
+
+`<n>` is the monitor number from `/second-screen monitor`. `-ExecutionPolicy Bypass` lets Windows run the bundled script, which is not signed, for this one call only; it changes no system setting. `-NoProfile` keeps your own PowerShell profile out of it.
+
+**What it sends.** Nothing leaves your computer: the mod makes no network calls. The only way out of the hooks module is the PowerShell program above, which gets the monitor number and the pop-out mode as arguments and answers with short JSON lines (whether a window was placed, on which monitor, or why not) that the mod shows as toasts. The script reads window titles and button names of the Claude desktop app only, and changes only the position and size of the app's Browser window and, for about a second, the mouse pointer.
+
+Details: [docs/how-it-works.md](docs/how-it-works.md).
 
 ## Troubleshooting
 
@@ -121,6 +145,7 @@ Holst du den Pane mit **Im Hauptfenster öffnen** zurück, bleibt er im Chat, bi
 - Ein kleiner PowerShell-Wächter prüft etwa einmal pro Sekunde; auch bei mehreren Sitzungen arbeitet nur einer.
 - Die Mod findet die Knöpfe der App über ihre Beschriftung (Deutsch und Englisch). Benennt ein App-Update sie um, kann das automatische Auslagern ausfallen; das Maximieren von Hand ausgelagerter Fenster funktioniert weiter.
 - Kein Netzwerk, keine Daten: Die Mod liest nichts aus deinen Projekten und sendet nichts.
+- Die Mod startet genau ein Programm: Windows PowerShell mit dem mitgelieferten Skript `scripts/second-screen.ps1`, das Fenster verschiebt und die Knöpfe der App drückt. Die genauen Befehle stehen oben unter [What the mod runs and sends](#what-the-mod-runs-and-sends).
 
 ### Deinstallieren
 

@@ -1,5 +1,6 @@
 # Moves Claude's own popped-out Browser pane window to another monitor and maximizes it.
 #   -Watch   keep running; place every Browser pop-out window as it appears
+#            (-PopOutMode auto also pops a newly shown Browser pane out)
 #   -PopOut  if no pop-out exists yet, press the pane's pop-out button in the main window
 #   -Place   place the pop-out windows that exist now
 #   -List    print the monitors
@@ -9,7 +10,7 @@ param(
   [switch]$PopOut,
   [switch]$Place,
   [switch]$List,
-  [switch]$AutoPopOut,
+  [ValidateSet('auto', 'off')][string]$PopOutMode = 'off',
   [int]$Monitor = 2,
   [string]$Title = 'Browser'
 )
@@ -213,7 +214,7 @@ if ($Watch) {
   $lastGone = [datetime]::MinValue      # when a pop-out window last closed
   $paneWasShown = $true                 # only a pane opened after the start counts as new
   $tick = 0
-  Emit @{ ok = $true; watching = $true; autoPopOut = [bool]$AutoPopOut }
+  Emit @{ ok = $true; watching = $true; autoPopOut = ($PopOutMode -eq 'auto') }
   while ($true) {
     try {
       # 1. Every Browser pop-out window that appears goes to the target monitor, maximized.
@@ -237,7 +238,7 @@ if ($Watch) {
       #    tool call) is popped out. One that comes back because its pop-out window
       #    just closed ("Im Hauptfenster oeffnen") is left docked until it is closed
       #    and opened again.
-      if ($AutoPopOut -and ($tick % 3) -eq 0) {
+      if ($PopOutMode -eq 'auto' -and ($tick % 3) -eq 0) {
         $shown = (Get-PaneHosts).Count -gt 0
         $dockedBack = ((Get-Date) - $lastGone).TotalSeconds -lt 4
         if ($shown -and -not $paneWasShown -and $pops.Count -eq 0 -and -not $dockedBack) {
